@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>友達 2409 深度分析 · 2026/10/01</title>
+<style>
+:root {
+  --bg:#0d1117; --card:#161b22; --card2:#1c2330; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e;
+  --green:#3fb950; --red:#f85149; --blue:#58a6ff; --yellow:#d29922;
+  --orange:#db6d28; --purple:#bc8cff; --pink:#f778ba;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,'Microsoft JhengHei','PingFang TC',sans-serif; padding:16px; max-width:920px; margin:0 auto; }
+h1 { font-size:1.5rem; text-align:center; margin-bottom:2px; }
+h2 { font-size:1rem; margin:18px 0 8px; color:var(--blue); display:flex; align-items:center; gap:6px; }
+.subtitle { text-align:center; color:var(--muted); font-size:0.8rem; margin-bottom:14px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+.stat { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center; }
+.stat .l { font-size:0.7rem; color:var(--muted); margin-bottom:4px; }
+.stat .v { font-size:1.3rem; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+th { text-align:left; color:var(--muted); font-weight:600; padding:5px 6px; border-bottom:1px solid var(--border); font-size:0.7rem; }
+td { padding:5px 6px; border-bottom:1px solid var(--border); text-align:right; }
+td:first-child, th:first-child { text-align:left; }
+tr:last-child td { border-bottom:none; }
+.tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.65rem; font-weight:600; }
+.tag.red { background:rgba(248,81,73,.15); color:var(--red); }
+.tag.green { background:rgba(63,185,80,.15); color:var(--green); }
+.tag.blue { background:rgba(88,166,255,.15); color:var(--blue); }
+.tag.yellow { background:rgba(210,153,34,.15); color:var(--yellow); }
+.tag.purple { background:rgba(188,140,255,.15); color:var(--purple); }
+.tag.orange { background:rgba(219,109,40,.15); color:var(--orange); }
+.note { background:rgba(210,153,34,.06); border:1px solid rgba(210,153,34,.25); border-radius:8px; padding:10px 12px; font-size:0.75rem; color:var(--yellow); line-height:1.7; margin-top:8px; }
+.note.red-note { background:rgba(248,81,73,.06); border-color:rgba(248,81,73,.25); color:var(--red); }
+.note.blue-note { background:rgba(88,166,255,.06); border-color:rgba(88,166,255,.25); color:var(--blue); }
+.bar-track { background:rgba(255,255,255,.06); border-radius:4px; height:18px; position:relative; margin:3px 0; }
+.bar-fill { height:100%; border-radius:4px; }
+.bar-label { position:absolute; left:6px; top:50%; transform:translateY(-50%); font-size:0.65rem; color:var(--muted); white-space:nowrap; }
+.bar-value { position:absolute; right:6px; top:50%; transform:translateY(-50%); font-size:0.65rem; font-weight:600; white-space:nowrap; }
+.footer { text-align:center; color:var(--muted); font-size:0.65rem; margin-top:16px; line-height:1.8; }
+.chart-container { display:flex; align-items:flex-end; gap:1px; height:200px; padding:8px 4px 0; background:rgba(255,255,255,.02); border-radius:8px; }
+.chart-container2 { display:flex; align-items:flex-end; gap:1px; height:90px; padding:8px 4px 0; background:rgba(255,255,255,.02); border-radius:8px; }
+@media (max-width:600px) { .grid2,.grid3,.grid4 { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<h1>📊 友達 2409 深度分析</h1>
+<div class="subtitle">2026/10/01 · 股價 38.30 元 · 外資主導的題材行情</div>
+
+<!-- KEY STATS -->
+<div class="grid4">
+  <div class="stat"><div class="l">今日收盤</div><div class="v" style="color:var(--red)">38.30</div></div>
+  <div class="stat"><div class="l">9月漲幅</div><div class="v" style="color:var(--green)">+45.8%</div></div>
+  <div class="stat"><div class="l">外資9月淨買超</div><div class="v" style="color:var(--green)">+5.2億股</div></div>
+  <div class="stat"><div class="l">2026 EPS</div><div class="v" style="color:var(--red)">-0.04元</div></div>
+</div>
+
+<!-- PRICE CHART -->
+<h2>📈 九月股價走勢（26.40 → 38.55，兩次漲停）</h2>
+<div class="card">
+  <div class="chart-container"><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:0px;background:#8b949e;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/1</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:0px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/2</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:2px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/3</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:6px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/4</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:34px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/7</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:47px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/8</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:61px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/9</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:71px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/10</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:56px;background:#f85149;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/11</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:34px;background:#f85149;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/14</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:22px;background:#f85149;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/15</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:44px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/16</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:53px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/17</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:59px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/18</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:103px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/21</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:152px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/22</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:123px;background:#f85149;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/23</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:116px;background:#f85149;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/24</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:128px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/29</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="width:100%;max-width:28px;height:180px;background:#3fb950;border-radius:3px 3px 0 0"></div><div style="font-size:8px;color:#8b949e;margin-top:3px;white-space:nowrap">9/30</div></div></div>
+  <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.7rem;color:var(--muted)">
+    <span>最低 26.05（9/2）</span>
+    <span style="color:var(--red)">最高 38.55（9/30 漲停）</span>
+  </div>
+</div>
+
+<!-- INSTITUTIONAL -->
+<h2>🏦 三大法人買賣超（9月，20 個交易日）</h2>
+<div class="grid3">
+  <div class="stat"><div class="l">外資淨買超</div><div class="v" style="color:var(--green)">+5.23 億股</div></div>
+  <div class="stat"><div class="l">投信淨買超</div><div class="v" style="color:var(--muted)">+0 萬股</div></div>
+  <div class="stat"><div class="l">自營淨買超</div><div class="v" style="color:var(--muted)">+268 萬股</div></div>
+</div>
+
+<div class="card" style="margin-top:10px">
+  <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px">外資每日買賣超（綠=買超，紅=賣超）</div>
+  <div class="chart-container2"><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:17px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">30</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:4px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">29</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:20px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">24</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:38px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">23</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:60px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">22</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:58px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">21</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:13px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">18</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:13px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">17</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:13px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">16</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:9px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">15</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:22px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">14</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:25px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">11</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:5px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">10</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:16px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">9</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:21px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">8</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:38px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">7</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:4px;background:#f85149;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">4</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;justify-content:flex-end"><div style="width:100%;max-width:24px;height:14px;background:#3fb950;border-radius:2px 2px 0 0"></div><div style="font-size:7px;color:#8b949e;margin-top:2px">3</div></div></div>
+</div>
+
+<div class="note blue-note">
+  🔍 <b>籌碼解讀</b>：外資一個月砸 5.2 億股把股價從 26.4 拉到 38.55，但中間買買賣賣起伏劇烈。<br>
+  · 9/21–22 爆量買超 4.8 億股 → 漲停 36.65<br>
+  · 9/23–24 反手賣超 2.3 億股 → 回檔 34.20<br>
+  · 9/29–30 又買回 0.8 億股 → 漲停 38.55<br>
+  · 10/1 外資轉賣超 3,622 萬股，投信接手買 262 萬股<br>
+  ⚠️ <b>投信整月零買超</b>——國內法人不認可這個價位，全是外資在玩。
+</div>
+
+<!-- SELL POINTS -->
+<h2>🎯 賣出點分析</h2>
+<div class="card">
+  <table>
+    <tr><th>目標</th><th>價格</th><th>距現價</th><th>策略</th><th>依據</th></tr>
+    <tr>
+      <td><span class="tag yellow">第一賣點</span></td>
+      <td style="font-weight:700;color:var(--yellow)">40.00</td>
+      <td>+4.4%</td>
+      <td>賣一半</td>
+      <td>心理關卡 · PBR ≈ 1.55 倍</td>
+    </tr>
+    <tr>
+      <td><span class="tag orange">第二賣點</span></td>
+      <td style="font-weight:700;color:var(--orange)">42.41</td>
+      <td>+10.7%</td>
+      <td>再賣 30%</td>
+      <td>連續漲停價 · 外資續買才有機會</td>
+    </tr>
+    <tr>
+      <td><span class="tag red">第三賣點</span></td>
+      <td style="font-weight:700;color:var(--red)">45.00</td>
+      <td>+17.5%</td>
+      <td>清倉</td>
+      <td>CPO 題材上限 · PBR 1.7 倍歷史高位</td>
+    </tr>
+    <tr>
+      <td><span class="tag red">🛑 停損</span></td>
+      <td style="font-weight:700;color:var(--red)">33.50</td>
+      <td>-12.5%</td>
+      <td>全數出場</td>
+      <td>跌破 9/22–24 密集支撐區</td>
+    </tr>
+  </table>
+</div>
+
+<div class="grid2" style="margin-top:10px">
+  <div class="card">
+    <h2 style="margin-top:0">🟢 利多因素</h2>
+    <ul style="font-size:0.78rem;line-height:2;padding-left:16px;color:var(--text)">
+      <li>Micro LED CPO 切入 AI 資料中心（Silicon Photonics）</li>
+      <li>併購 BHTC → 升格車廠 Tier-1 智慧座艙供應商</li>
+      <li>4.5 代線玻璃基板低軌衛星相位陣列天線</li>
+      <li>外資 9 月強力買超，趨勢動能未斷</li>
+      <li>股價創 16 年新高，技術面多頭</li>
+      <li>AR 眼鏡光波導與光機引擎題材</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 style="margin-top:0">🔴 風險因素</h2>
+    <ul style="font-size:0.78rem;line-height:2;padding-left:16px;color:var(--text)">
+      <li>2026 EPS 預估 -0.04 元，本業虧損</li>
+      <li>Q4 面板「旺季不旺」：需求季減 4%、成本季增 4–7%</li>
+      <li>筆電面板 Q3 採購量季減 15–20%</li>
+      <li>外資 10/1 已轉為賣超 3,622 萬股</li>
+      <li>從未連續兩天漲停（9/22 漲停隔天 -5.3%）</li>
+      <li>PBR 1.5 倍，法人評等「中立」</li>
+    </ul>
+  </div>
+</div>
+
+<!-- VALUATION -->
+<h2>📋 估值與產業地位</h2>
+<div class="card">
+  <table>
+    <tr><th>指標</th><th>數值</th><th>對照</th></tr>
+    <tr><td>市值</td><td>約 2,900 億</td><td>全球第五大面板廠</td></tr>
+    <tr><td>PBR（股價淨值比）</td><td style="font-weight:700;color:var(--yellow)">≈1.55 倍</td><td>群創 1.3 倍已被稱「高檔」</td></tr>
+    <tr><td>2026 EPS</td><td style="color:var(--red)">-0.04 元</td><td>群創 +0.85 元</td></tr>
+    <tr><td>2026 Q1 營業損益</td><td style="color:var(--red)">-6.36 億</td><td>毛利率 11.9%</td></tr>
+    <tr><td>法人評等</td><td><span class="tag yellow">中立</span></td><td>元太（8069）才給「買進」</td></tr>
+    <tr><td>上漲主因</td><td colspan="2" style="text-align:left">非面板本業 → 轉型題題溢價（CPO / 車載 / 衛星）</td></tr>
+  </table>
+</div>
+
+<div class="note">
+  💡 <b>操作建議（個人觀點，非投資建議）</b><br>
+  · 40 元先賣一半，剩下的設 33.5 元停損<br>
+  · 外資 10/1 開始賣超，如果連續 3 天賣超 → 提前出場<br>
+  · 10/1 是國慶連假前最後交易日，變數大<br>
+  · 你在友達 L3C 上班，買賣請注意內線交易規定
+</div>
+
+<div class="note red-note">
+  ⚠️ <b>免責聲明</b>：本報告基於公開資料（TWSE、法人報告、新聞）整理，僅供參考，不構成任何投資建議。投資有風險，請自行判斷並自負盈虧。
+</div>
+
+<div class="footer">
+  資料來源：TWSE MIS API · TWSE 三大法人買賣超日報 · 新聞：今周刊/自由財經/經濟日報<br>
+  生成時間：2026/10/01 · 製作：OpenClaw
+</div>
+
+</body>
+</html>
